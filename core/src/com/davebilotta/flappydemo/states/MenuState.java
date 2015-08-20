@@ -1,5 +1,6 @@
-package com.davebilotta.flappydemo.States;
+package com.davebilotta.flappydemo.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.davebilotta.flappydemo.FlappyDemo;
@@ -18,13 +19,16 @@ public class MenuState extends State {
 	@Override
 	public void handleInput() {
 		// Aug 19, 2015 8:26:55 PM
-		
+		if (Gdx.input.justTouched()) {
+			gsm.set(new PlayState(gsm));
+			dispose();
+		}
 	}
 
 	@Override
 	public void update(float dt) {
 		// Aug 19, 2015 8:26:55 PM
-		
+		handleInput();
 	}
 
 	@Override
@@ -37,6 +41,12 @@ public class MenuState extends State {
 		
 		sb.end();
 				
+	}
+	@Override
+	public void dispose() {
+		// Aug 19, 2015 9:03:07 PM
+		background.dispose();
+		playButton.dispose();
 	}
 
 

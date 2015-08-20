@@ -1,4 +1,4 @@
-package com.davebilotta.flappydemo.States;
+package com.davebilotta.flappydemo.states;
 
 import java.util.Stack;
 
