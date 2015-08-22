@@ -16,6 +16,7 @@ public class Tube {
 	private Vector2 posTopTube, posBotTube;
 	private Rectangle boundsTop, boundsBot;
 	private Random rand;
+	public boolean collided;
 
 	public Tube(float x) { 
 		// TODO: Create a static texture that is used by all rather than having each Tube have a top/bottom tube  
@@ -28,6 +29,8 @@ public class Tube {
 		
 		boundsTop = new Rectangle(posTopTube.x, posTopTube.y, topTube.getWidth(), topTube.getHeight());
 		boundsBot = new Rectangle(posBotTube.x, posBotTube.y, bottomTube.getWidth(), bottomTube.getHeight());
+		
+		collided = false;
 	}
 	
 	public Texture getTopTube() { 
@@ -52,6 +55,8 @@ public class Tube {
 		
 		boundsTop.setPosition(posTopTube.x, posTopTube.y);
 		boundsBot.setPosition(posBotTube.x, posBotTube.y);
+	
+		collided = false;
 	}
 	
 	public boolean collides(Rectangle player) { 

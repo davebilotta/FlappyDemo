@@ -1,9 +1,13 @@
 package com.davebilotta.flappydemo.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.davebilotta.flappydemo.FlappyDemo;
@@ -22,12 +26,16 @@ public class PlayState extends State {
 	private Vector2 groundPos1, groundPos2;
 	private static final int GROUND_Y_OFFSET = -30;
 	private Sound die;
+	private Sound coin;
+	private int score;
+	private BitmapFont font;
 	
 	private Array<Tube> tubes;
 	
 	protected PlayState(GameStateManager gsm) {
 		super(gsm);
 		bird = new Bird(50, 300);
+		score = 0;
 		
 		cam.setToOrtho(false,FlappyDemo.WIDTH/2, FlappyDemo.HEIGHT/2);
 		bg = new Texture("bg.png");
@@ -40,13 +48,17 @@ public class PlayState extends State {
 			tubes.add(new Tube (i * (TUBE_SPACING + Tube.TUBE_WIDTH)));
 		}
 		
+		coin = Gdx.audio.newSound(Gdx.files.internal("coin.ogg"));
 		die = Gdx.audio.newSound(Gdx.files.internal("die.ogg"));
+		
+		font = new BitmapFont();
+		font.setColor(Color.WHITE);
 	}
 
 	@Override
 	public void handleInput() {
 		// Aug 19, 2015 9:04:27 PM
-		if (Gdx.input.justTouched()) {
+		if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			bird.jump();
 		}
 	}
@@ -69,7 +81,8 @@ public class PlayState extends State {
 			
 			// check collisions 
 			if (tube.collides(bird.getBounds())) {
-				gsm.set(new PlayState(gsm));
+				//gsm.set(new PlayState(gsm));
+				gsm.set(new MenuState(gsm));
 			}
 				
 		}
@@ -82,6 +95,20 @@ public class PlayState extends State {
 		}
 		
 		cam.update();
+		
+		for (Tube tube: tubes) { 
+			if (!tube.collided) {
+				Rectangle tubeCollider = new Rectangle(tube.getPosTopTube().x + (tube.TUBE_WIDTH/2), 0, 1, 1000);
+			
+				if (tubeCollider.overlaps(bird.getBounds())) { 
+					tube.collided = true;
+					score++;
+					coin.play(0.5f);
+					log("Score is now " + score);
+			
+			}
+		}
+	}
 	}
 
 	@Override
@@ -99,6 +126,7 @@ public class PlayState extends State {
 		sb.draw(ground,groundPos1.x, groundPos1.y);
 		sb.draw(ground,groundPos2.x, groundPos2.y);
 		
+		//font.draw(sb, "Score: " + score, 100, FlappyDemo.HEIGHT - 100);
 		sb.end();
 		
 	}
@@ -119,6 +147,8 @@ public class PlayState extends State {
 		bird.dispose();
 		ground.dispose();
 		die.dispose();
+		coin.dispose();
+		font.dispose();
 		
 		// For loop like this causes a nested iterator crash
 		//	for (Tube tube: tubes) { 
@@ -128,7 +158,10 @@ public class PlayState extends State {
 		}
 		//}
 		
-		System.out.println("PlayState disposed");
+	}
+	
+	public void log(String message) { 
+		System.out.println(message);
 	}
 
 }
