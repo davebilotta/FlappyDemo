@@ -18,11 +18,11 @@ public class GameStateManager {
 	
 	/* Not returning anything when popping, so void */
 	public void pop() {
-		states.pop();
+		states.pop().dispose();
 	}
 	
 	public void set(State state) { 
-		states.pop();
+		states.pop().dispose();
 		states.push(state);
 	}
 	
